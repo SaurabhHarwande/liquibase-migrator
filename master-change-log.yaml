@@ -1,0 +1,3 @@
+databaseChangeLog:
+- includeAll:
+  - path: '${MIGRATIONS_BASE_FOLDER}/Migrations/'
