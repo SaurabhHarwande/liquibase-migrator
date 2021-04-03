@@ -4,7 +4,7 @@
 case ${1} in
     initialize)
         #TODO: Check if snapshot already exists
-        if [ -e ./${MIGRATIONS_BASE_DIRECTORY}/${MIGRATIONS_MASTERLOG_FILE} ]
+        if [ -f ./${MIGRATIONS_BASE_DIRECTORY}/${MIGRATIONS_MASTERLOG_FILE} ]
         then
             echo "A migration project has already been initialized. No scripts will be executed."
         else
@@ -17,7 +17,7 @@ case ${1} in
                 --classpath ${DB_DRIVER} \
                 --url ${DB_URL} \
                 --username ${DB_USERNAME} \
-                --password "${DB_PASSWORD}" \
+                --password ${DB_PASSWORD} \
                 --outputFile ./${MIGRATIONS_BASE_DIRECTORY}/${DB_SNAPSHOT_FILE} \
                 snapshot \
                 --snapshotFormat ${MIGRATIONS_FORMAT}
@@ -35,7 +35,7 @@ case ${1} in
         if [ -z ${2} ]
         then
             echo "Please provide a migration name."
-        elif [ -e ./${MIGRATIONS_BASE_DIRECTORY}/${MIGRATIONS_STORE_FOLDER}/${2}.${MIGRATIONS_FORMAT}]
+        elif [ -f ./${MIGRATIONS_BASE_DIRECTORY}/${MIGRATIONS_STORE_SIRECTORY}/${2}.${MIGRATIONS_FORMAT} ]
         then
             echo "A migration with name ${2} already exists. No scripts will be executed."
         else
