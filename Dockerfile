@@ -3,6 +3,7 @@ RUN apk add --repository=http://dl-cdn.alpinelinux.org/alpine/edge/testing/ liqu
 #TODO: Move ENV variable out of docker file after development
 ENV MIGRATIONS_BASE_DIRECTORY=DatabaseMigrations
 ENV MIGRATIONS_STORE_SIRECTORY=Migrations
+ENV MIGRATIONS_AUTHOR="Saurabh Harwande"
 ENV MIGRATIONS_FORMAT=yaml
 ENV MIGRATIONS_MASTERLOG_FILE=master-change-log.${MIGRATIONS_FORMAT}
 ENV DB_SNAPSHOT_FILE=db-snapshot.${MIGRATIONS_FORMAT}

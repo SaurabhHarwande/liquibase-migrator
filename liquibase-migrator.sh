@@ -32,7 +32,10 @@ case ${1} in
         fi
         ;;
     generate)
-        if [ -e ./${MIGRATIONS_BASE_DIRECTORY}/${MIGRATIONS_STORE_FOLDER}/${2}.${MIGRATIONS_FORMAT}]
+        if [ -z ${2} ]
+        then
+            echo "Please provide a migration name."
+        elif [ -e ./${MIGRATIONS_BASE_DIRECTORY}/${MIGRATIONS_STORE_FOLDER}/${2}.${MIGRATIONS_FORMAT}]
         then
             echo "A migration with name ${2} already exists. No scripts will be executed."
         else
@@ -45,6 +48,13 @@ case ${1} in
                 --url \"offline:${DB_TYPE}?snapshot=./${MIGRATIONS_BASE_DIRECTORY}/${DB_SNAPSHOT_FILE}\" \
                 --changeLogFile ./${MIGRATIONS_BASE_DIRECTORY}/${MIGRATIONS_STORE_FOLDER}/${2}.${MIGRATIONS_FORMAT} \
                 diffChangeLog
+            #Append a tag change set to the mgirations file
+            printf -- "- changeSet:\n" >> ./${MIGRATIONS_BASE_DIRECTORY}/${MIGRATIONS_STORE_FOLDER}/${2}.${MIGRATIONS_FORMAT}
+            printf -- "    id: migration-name-${2}\n" >> ./${MIGRATIONS_BASE_DIRECTORY}/${MIGRATIONS_STORE_FOLDER}/${2}.${MIGRATIONS_FORMAT}
+            printf -- "    author: ${MIGRATIONS_AUTHOR}\n" >> ./${MIGRATIONS_BASE_DIRECTORY}/${MIGRATIONS_STORE_FOLDER}/${2}.${MIGRATIONS_FORMAT}
+            printf -- "    changes:\n" >> ./${MIGRATIONS_BASE_DIRECTORY}/${MIGRATIONS_STORE_FOLDER}/${2}.${MIGRATIONS_FORMAT}
+            printf -- "    - tagDatabase:\n" >> ./${MIGRATIONS_BASE_DIRECTORY}/${MIGRATIONS_STORE_FOLDER}/${2}.${MIGRATIONS_FORMAT}
+            printf -- "        tag: ${2}\n" >> ./${MIGRATIONS_BASE_DIRECTORY}/${MIGRATIONS_STORE_FOLDER}/${2}.${MIGRATIONS_FORMAT}
             #Sync the database snapshot
             liquibase \
                 --classpath ${DB_DRIVER} \
@@ -62,13 +72,6 @@ case ${1} in
                 --password ${DB_PASSWORD} \
                 --changeLogFile ./${MIGRATIONS_BASE_DIRECTORY}/${MIGRATIONS_MASTERLOG_FILE} \
                 changeLogSync
-            #Tag the database entries to enable tag base updates and rollback
-            liquibase \
-                --classpath ${DB_DRIVER} \
-                --url ${DB_URL} \
-                --username ${DB_USERNAME} \
-                --password ${DB_PASSWORD} \
-                tag ${2}
         fi
         ;;
     update)
