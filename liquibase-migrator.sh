@@ -45,16 +45,17 @@ case ${1} in
                 --referenceUrl ${DB_URL} \
                 --referenceUsername ${DB_USERNAME} \
                 --referencePassword ${DB_PASSWORD} \
-                --url \"offline:${DB_TYPE}?snapshot=./${MIGRATIONS_BASE_DIRECTORY}/${DB_SNAPSHOT_FILE}\" \
-                --changeLogFile ./${MIGRATIONS_BASE_DIRECTORY}/${MIGRATIONS_STORE_FOLDER}/${2}.${MIGRATIONS_FORMAT} \
+                --url "offline:${DB_TYPE}?snapshot=./${MIGRATIONS_BASE_DIRECTORY}/${DB_SNAPSHOT_FILE}" \
+                --changeLogFile ./${MIGRATIONS_BASE_DIRECTORY}/${MIGRATIONS_STORE_SIRECTORY}/${2}.${MIGRATIONS_FORMAT} \
+                --changeSetAuthor "${MIGRATIONS_AUTHOR}" \
                 diffChangeLog
             #Append a tag change set to the mgirations file
-            printf -- "- changeSet:\n" >> ./${MIGRATIONS_BASE_DIRECTORY}/${MIGRATIONS_STORE_FOLDER}/${2}.${MIGRATIONS_FORMAT}
-            printf -- "    id: migration-name-${2}\n" >> ./${MIGRATIONS_BASE_DIRECTORY}/${MIGRATIONS_STORE_FOLDER}/${2}.${MIGRATIONS_FORMAT}
-            printf -- "    author: ${MIGRATIONS_AUTHOR}\n" >> ./${MIGRATIONS_BASE_DIRECTORY}/${MIGRATIONS_STORE_FOLDER}/${2}.${MIGRATIONS_FORMAT}
-            printf -- "    changes:\n" >> ./${MIGRATIONS_BASE_DIRECTORY}/${MIGRATIONS_STORE_FOLDER}/${2}.${MIGRATIONS_FORMAT}
-            printf -- "    - tagDatabase:\n" >> ./${MIGRATIONS_BASE_DIRECTORY}/${MIGRATIONS_STORE_FOLDER}/${2}.${MIGRATIONS_FORMAT}
-            printf -- "        tag: ${2}\n" >> ./${MIGRATIONS_BASE_DIRECTORY}/${MIGRATIONS_STORE_FOLDER}/${2}.${MIGRATIONS_FORMAT}
+            printf -- "- changeSet:\n" >> ./${MIGRATIONS_BASE_DIRECTORY}/${MIGRATIONS_STORE_SIRECTORY}/${2}.${MIGRATIONS_FORMAT}
+            printf -- "    id: migration-name-${2}\n" >> ./${MIGRATIONS_BASE_DIRECTORY}/${MIGRATIONS_STORE_SIRECTORY}/${2}.${MIGRATIONS_FORMAT}
+            printf -- "    author: ${MIGRATIONS_AUTHOR}\n" >> ./${MIGRATIONS_BASE_DIRECTORY}/${MIGRATIONS_STORE_SIRECTORY}/${2}.${MIGRATIONS_FORMAT}
+            printf -- "    changes:\n" >> ./${MIGRATIONS_BASE_DIRECTORY}/${MIGRATIONS_STORE_SIRECTORY}/${2}.${MIGRATIONS_FORMAT}
+            printf -- "    - tagDatabase:\n" >> ./${MIGRATIONS_BASE_DIRECTORY}/${MIGRATIONS_STORE_SIRECTORY}/${2}.${MIGRATIONS_FORMAT}
+            printf -- "        tag: ${2}\n" >> ./${MIGRATIONS_BASE_DIRECTORY}/${MIGRATIONS_STORE_SIRECTORY}/${2}.${MIGRATIONS_FORMAT}
             #Sync the database snapshot
             liquibase \
                 --classpath ${DB_DRIVER} \
