@@ -1,6 +1,23 @@
 #!/bin/sh
 #TODO: Implement(google if possible) a simple command to read inline parameter and use them to override ENVIRONMENT variables.
 #TODO: Research if there is any way to shorten the below command and store the DB details, classpath etc. in simple variables and use them instead.
+#Use a default driver if user doesnot provide one explicitly.
+if [ -z ${DB_DRIVER} ]
+then
+    case ${DB_TYPE} in
+        mysql)
+            DB_DRIVER="./DefaultDatabaseConnectors/mysql-connector-java-8.0.23.jar"
+            ;;
+        postgresql)
+            DB_DRIVER="./DefaultDatabaseConnectors/postgresql-42.2.19.jar"
+            ;;
+        *)
+            #Throw error in case default driver is not found
+            echo "Default drivers for ${DB_TYPE} not found. Please provide DB_DRIVER."
+            return 1
+            ;;
+    esac
+fi
 case ${1} in
     initialize)
         #Check if snapshot already exists

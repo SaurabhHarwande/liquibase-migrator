@@ -12,9 +12,8 @@ ENV DB_NAME=postgres3
 ENV DB_URL=jdbc:${DB_TYPE}://local-postgres.dns.podman:5432/${DB_NAME}
 ENV DB_USERNAME=postgres
 ENV DB_PASSWORD=RandomTown
-ENV DB_DRIVER=postgresql-42.2.19.jar
 WORKDIR /liquibase-migrator
-COPY ./postgresql-42.2.19.jar .
+COPY ./DefaultDatabaseConnectors/* ./DefaultDatabaseConnectors/
 COPY ./master-change-log.yaml .
 COPY ./liquibase-migrator.sh /usr/local/bin/liquibase-migrator
 #This should be removed. Only using it for development
