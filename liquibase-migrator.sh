@@ -1,6 +1,5 @@
 #!/bin/sh
 #TODO: Implement(google if possible) a simple command to read inline parameter and use them to override ENVIRONMENT variables.
-#TODO: Research if there is any way to shorten the below command and store the DB details, classpath etc. in simple variables and use them instead.
 #Use a default driver if user doesnot provide one explicitly.
 if [ -z ${DB_DRIVER} ]
 then
@@ -18,6 +17,19 @@ then
             ;;
     esac
 fi
+LIQUIBASE_CLASSPATH=$(echo --classpath ${DB_DRIVER})
+DB_PARAMS=$(
+    echo \
+        --url ${DB_URL} \
+        --username ${DB_USERNAME} \
+        --password ${DB_PASSWORD}
+)
+REFERENCE_DB_PARAMS=$(
+    echo \
+        --referenceUrl ${DB_URL} \
+        --referenceUsername ${DB_USERNAME} \
+        --referencePassword ${DB_PASSWORD}
+)}
 case ${1} in
     initialize)
         #Check if snapshot already exists
@@ -31,19 +43,15 @@ case ${1} in
                 ./${MIGRATIONS_BASE_DIRECTORY}/${MIGRATIONS_MASTERLOG_FILE}
             #Create base snapshot
             liquibase \
-                --classpath ${DB_DRIVER} \
-                --url ${DB_URL} \
-                --username ${DB_USERNAME} \
-                --password ${DB_PASSWORD} \
+                ${LIQUIBASE_CLASSPATH} \
+                ${DB_PARAMS} \
                 --outputFile ./${MIGRATIONS_BASE_DIRECTORY}/${DB_SNAPSHOT_FILE} \
                 snapshot \
                 --snapshotFormat ${MIGRATIONS_FORMAT}
             #Sync initial change log to database
             liquibase \
-                --classpath ${DB_DRIVER} \
-                --url ${DB_URL} \
-                --username ${DB_USERNAME} \
-                --password ${DB_PASSWORD} \
+                ${LIQUIBASE_CLASSPATH} \
+                ${DB_PARAMS} \
                 --changeLogFile ./${MIGRATIONS_BASE_DIRECTORY}/${MIGRATIONS_MASTERLOG_FILE} \
                 changeLogSync
         fi
@@ -58,10 +66,8 @@ case ${1} in
         else
             #Generate new change log file
             liquibase \
-                --classpath ${DB_DRIVER} \
-                --referenceUrl ${DB_URL} \
-                --referenceUsername ${DB_USERNAME} \
-                --referencePassword ${DB_PASSWORD} \
+                ${LIQUIBASE_CLASSPATH} \
+                ${REFERENCE_DB_PARAMS} \
                 --url "offline:${DB_TYPE}?snapshot=./${MIGRATIONS_BASE_DIRECTORY}/${DB_SNAPSHOT_FILE}" \
                 --changeLogFile ./${MIGRATIONS_BASE_DIRECTORY}/${MIGRATIONS_STORE_SIRECTORY}/${2}.${MIGRATIONS_FORMAT} \
                 --changeSetAuthor "${MIGRATIONS_AUTHOR}" \
@@ -75,19 +81,15 @@ case ${1} in
             printf -- "        tag: ${2}\n" >> ./${MIGRATIONS_BASE_DIRECTORY}/${MIGRATIONS_STORE_SIRECTORY}/${2}.${MIGRATIONS_FORMAT}
             #Sync the database snapshot
             liquibase \
-                --classpath ${DB_DRIVER} \
-                --url ${DB_URL} \
-                --username ${DB_USERNAME} \
-                --password ${DB_PASSWORD} \
+                ${LIQUIBASE_CLASSPATH} \
+                ${DB_PARAMS} \
                 --outputFile ./${MIGRATIONS_BASE_DIRECTORY}/${DB_SNAPSHOT_FILE} \
                 snapshot \
                 --snapshotFormat ${MIGRATIONS_FORMAT}
             #Add entries to the database changelog tables
             liquibase \
-                --classpath ${DB_DRIVER} \
-                --url ${DB_URL} \
-                --username ${DB_USERNAME} \
-                --password ${DB_PASSWORD} \
+                ${LIQUIBASE_CLASSPATH} \
+                ${DB_PARAMS} \
                 --changeLogFile ./${MIGRATIONS_BASE_DIRECTORY}/${MIGRATIONS_MASTERLOG_FILE} \
                 changeLogSync
         fi
@@ -97,19 +99,15 @@ case ${1} in
         then
             #No tagname passed. Run a simple update.
             liquibase \
-                --classpath ${DB_DRIVER} \
-                --url ${DB_URL} \
-                --username ${DB_USERNAME} \
-                --password ${DB_PASSWORD} \
+                ${LIQUIBASE_CLASSPATH} \
+                ${DB_PARAMS} \
                 --changeLogFile ./${MIGRATIONS_BASE_DIRECTORY}/${MIGRATIONS_MASTERLOG_FILE} \
                 update
         else
             #Tagname passed as second parameter. Run the updateToTag command.
             liquibase \
-                --classpath ${DB_DRIVER} \
-                --url ${DB_URL} \
-                --username ${DB_USERNAME} \
-                --password ${DB_PASSWORD} \
+                ${LIQUIBASE_CLASSPATH} \
+                ${DB_PARAMS} \
                 --changeLogFile ./${MIGRATIONS_BASE_DIRECTORY}/${MIGRATIONS_MASTERLOG_FILE} \
                 updateToTag ${2}
         fi
@@ -117,10 +115,8 @@ case ${1} in
     rollback)
         #Rollback the database to a mentioned tag
         liquibase \
-            --classpath ${DB_DRIVER} \
-            --url ${DB_URL} \
-            --username ${DB_USERNAME} \
-            --password ${DB_PASSWORD} \
+            ${LIQUIBASE_CLASSPATH} \
+            ${DB_PARAMS} \
             --changeLogFile ./${MIGRATIONS_BASE_DIRECTORY}/${MIGRATIONS_MASTERLOG_FILE} \
             rollback ${2}
         ;;
