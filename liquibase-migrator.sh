@@ -1,4 +1,5 @@
 #!/bin/sh
+set -e
 #TODO: Implement(google if possible) a simple command to read inline parameter and use them to override ENVIRONMENT variables.
 #Use a default driver if user doesnot provide one explicitly.
 if [ -z ${DB_DRIVER} ]
