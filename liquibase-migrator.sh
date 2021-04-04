@@ -3,7 +3,7 @@
 #TODO: Research if there is any way to shorten the below command and store the DB details, classpath etc. in simple variables and use them instead.
 case ${1} in
     initialize)
-        #TODO: Check if snapshot already exists
+        #Check if snapshot already exists
         if [ -f ./${MIGRATIONS_BASE_DIRECTORY}/${MIGRATIONS_MASTERLOG_FILE} ]
         then
             echo "A migration project has already been initialized. No scripts will be executed."
