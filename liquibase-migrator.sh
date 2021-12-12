@@ -31,7 +31,7 @@ REFERENCE_DB_PARAMS=$(
         --referenceUrl ${DB_URL} \
         --referenceUsername ${DB_USERNAME} \
         --referencePassword ${DB_PASSWORD}
-)}
+)
 case ${1} in
     initialize)
         #Check if snapshot already exists
