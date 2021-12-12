@@ -62,7 +62,7 @@ case ${1} in
         if [ -z ${2} ]
         then
             echo "Please provide a migration name."
-        elif [ -f ./${MIGRATIONS_BASE_DIRECTORY}/${MIGRATIONS_STORE_SIRECTORY}/${2}.${MIGRATIONS_FORMAT} ]
+        elif [ -f ./${MIGRATIONS_BASE_DIRECTORY}/${MIGRATIONS_STORE_DIRECTORY}/${2}.${MIGRATIONS_FORMAT} ]
         then
             echo "A migration with name ${2} already exists. No scripts will be executed."
         else
@@ -71,16 +71,16 @@ case ${1} in
                 ${LIQUIBASE_CLASSPATH} \
                 ${REFERENCE_DB_PARAMS} \
                 --url "offline:${DB_TYPE}?snapshot=./${MIGRATIONS_BASE_DIRECTORY}/${DB_SNAPSHOT_FILE}" \
-                --changeLogFile ./${MIGRATIONS_BASE_DIRECTORY}/${MIGRATIONS_STORE_SIRECTORY}/${2}.${MIGRATIONS_FORMAT} \
+                --changeLogFile ./${MIGRATIONS_BASE_DIRECTORY}/${MIGRATIONS_STORE_DIRECTORY}/${2}.${MIGRATIONS_FORMAT} \
                 --changeSetAuthor "${MIGRATIONS_AUTHOR}" \
                 diffChangeLog
             #Append a tag change set to the mgirations file
-            printf -- "- changeSet:\n" >> ./${MIGRATIONS_BASE_DIRECTORY}/${MIGRATIONS_STORE_SIRECTORY}/${2}.${MIGRATIONS_FORMAT}
-            printf -- "    id: migration-name-${2}\n" >> ./${MIGRATIONS_BASE_DIRECTORY}/${MIGRATIONS_STORE_SIRECTORY}/${2}.${MIGRATIONS_FORMAT}
-            printf -- "    author: ${MIGRATIONS_AUTHOR}\n" >> ./${MIGRATIONS_BASE_DIRECTORY}/${MIGRATIONS_STORE_SIRECTORY}/${2}.${MIGRATIONS_FORMAT}
-            printf -- "    changes:\n" >> ./${MIGRATIONS_BASE_DIRECTORY}/${MIGRATIONS_STORE_SIRECTORY}/${2}.${MIGRATIONS_FORMAT}
-            printf -- "    - tagDatabase:\n" >> ./${MIGRATIONS_BASE_DIRECTORY}/${MIGRATIONS_STORE_SIRECTORY}/${2}.${MIGRATIONS_FORMAT}
-            printf -- "        tag: ${2}\n" >> ./${MIGRATIONS_BASE_DIRECTORY}/${MIGRATIONS_STORE_SIRECTORY}/${2}.${MIGRATIONS_FORMAT}
+            printf -- "- changeSet:\n" >> ./${MIGRATIONS_BASE_DIRECTORY}/${MIGRATIONS_STORE_DIRECTORY}/${2}.${MIGRATIONS_FORMAT}
+            printf -- "    id: migration-name-${2}\n" >> ./${MIGRATIONS_BASE_DIRECTORY}/${MIGRATIONS_STORE_DIRECTORY}/${2}.${MIGRATIONS_FORMAT}
+            printf -- "    author: ${MIGRATIONS_AUTHOR}\n" >> ./${MIGRATIONS_BASE_DIRECTORY}/${MIGRATIONS_STORE_DIRECTORY}/${2}.${MIGRATIONS_FORMAT}
+            printf -- "    changes:\n" >> ./${MIGRATIONS_BASE_DIRECTORY}/${MIGRATIONS_STORE_DIRECTORY}/${2}.${MIGRATIONS_FORMAT}
+            printf -- "    - tagDatabase:\n" >> ./${MIGRATIONS_BASE_DIRECTORY}/${MIGRATIONS_STORE_DIRECTORY}/${2}.${MIGRATIONS_FORMAT}
+            printf -- "        tag: ${2}\n" >> ./${MIGRATIONS_BASE_DIRECTORY}/${MIGRATIONS_STORE_DIRECTORY}/${2}.${MIGRATIONS_FORMAT}
             #Sync the database snapshot
             liquibase \
                 ${LIQUIBASE_CLASSPATH} \
