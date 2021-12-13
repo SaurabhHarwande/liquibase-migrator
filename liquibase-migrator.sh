@@ -39,6 +39,10 @@ case ${1} in
         then
             echo "A migration project has already been initialized. No scripts will be executed."
         else
+            if [ ! -d ./${MIGRATIONS_BASE_DIRECTORY}/${MIGRATIONS_STORE_DIRECTORY} ]
+            then
+                mkdir ./${MIGRATIONS_BASE_DIRECTORY}/${MIGRATIONS_STORE_DIRECTORY}
+            fi
             #Copy over master change log
             cp \
                 ./${MIGRATIONS_MASTERLOG_FILE} \
@@ -81,6 +85,13 @@ case ${1} in
             printf -- "    changes:\n" >> ./${MIGRATIONS_BASE_DIRECTORY}/${MIGRATIONS_STORE_DIRECTORY}/${2}.${MIGRATIONS_FORMAT}
             printf -- "    - tagDatabase:\n" >> ./${MIGRATIONS_BASE_DIRECTORY}/${MIGRATIONS_STORE_DIRECTORY}/${2}.${MIGRATIONS_FORMAT}
             printf -- "        tag: ${2}\n" >> ./${MIGRATIONS_BASE_DIRECTORY}/${MIGRATIONS_STORE_DIRECTORY}/${2}.${MIGRATIONS_FORMAT}
+            
+            #Add entries to the database changelog tables
+            liquibase \
+                ${LIQUIBASE_CLASSPATH} \
+                ${DB_PARAMS} \
+                --changeLogFile ./${MIGRATIONS_BASE_DIRECTORY}/${MIGRATIONS_MASTERLOG_FILE} \
+                changeLogSync
             #Sync the database snapshot
             liquibase \
                 ${LIQUIBASE_CLASSPATH} \
@@ -88,12 +99,6 @@ case ${1} in
                 --outputFile ./${MIGRATIONS_BASE_DIRECTORY}/${DB_SNAPSHOT_FILE} \
                 snapshot \
                 --snapshotFormat ${MIGRATIONS_FORMAT}
-            #Add entries to the database changelog tables
-            liquibase \
-                ${LIQUIBASE_CLASSPATH} \
-                ${DB_PARAMS} \
-                --changeLogFile ./${MIGRATIONS_BASE_DIRECTORY}/${MIGRATIONS_MASTERLOG_FILE} \
-                changeLogSync
         fi
         ;;
     update)
